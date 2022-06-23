@@ -7,11 +7,11 @@ import Iconify from '../../../components/Iconify';
 
 // ----------------------------------------------------------------------
 
-const RootStyle = styled(Toolbar)(({ theme }) => ({
+const RootStyle = styled(Toolbar)(() => ({
   height: 96,
   display: 'flex',
   justifyContent: 'space-between',
-  padding: theme.spacing(0, 1, 0, 3),
+  padding: '0 !important',
 }));
 
 const SearchStyle = styled(OutlinedInput)(({ theme }) => ({

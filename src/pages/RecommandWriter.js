@@ -1,172 +1,66 @@
-import { sentenceCase } from 'change-case';
-import { useState } from 'react';
 // material
-import {
-  Card,
-  Table,
-  Stack,
-  Avatar,
-  Checkbox,
-  TableRow,
-  TableBody,
-  TableCell,
-  Container,
-  Typography,
-  TableContainer,
-  TablePagination,
-} from '@mui/material';
+import styled from '@emotion/styled';
+import { Stack, Container, Typography, Button } from '@mui/material';
+import { Box } from '@mui/system';
+import { useState } from 'react';
 // components
 import Page from '../components/Page';
-import Label from '../components/Label';
-import Scrollbar from '../components/Scrollbar';
-import SearchNotFound from '../components/SearchNotFound';
-import { RecommandWriterListHead, RecommandWriterListToolbar } from '../sections/@dashboard/recommandWriter';
-// mock
-import USERLIST from '../_mock/user';
+import { RecommandWriterSubmit, WriterSearch } from '../sections/@dashboard/recommandWriter';
 
-// ----------------------------------------------------------------------
+//----------------------------
+const ButtonBoxStyle = styled(Box)(() => ({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  marginTop: '1rem',
+}));
 
-const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
-];
+const ButtonStyle = styled(Button)(() => ({
+  height: '2rem',
+}));
 
 // ----------------------------------------------------------------------
 
 export default function RecommandWriter() {
-  const [page, setPage] = useState(0);
+  const [selectedSearchWriter, setSelectedSearchWriter] = useState([]);
+  const [recommandedWriters, setRecommandedWriters] = useState([]);
 
-  const [selected, setSelected] = useState([]);
-
-  const [filterName, setFilterName] = useState('');
-
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
+  const addSelectedSearchWriter = (writer) => {
+    setSelectedSearchWriter(writer);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
+  const addRecommandedWriter = () => {
+    setRecommandedWriters((prev) => {
+      const newSelectedSearchWriter = selectedSearchWriter.filter((writer) => !prev.some((w) => w.id === writer.id));
+      return [...prev, ...newSelectedSearchWriter];
+    });
+    setSelectedSearchWriter([]);
   };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleFilterByName = (event) => {
-    setFilterName(event.target.value);
-  };
-
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
-
-  const isUserNotFound = USERLIST.length === 0;
 
   return (
     <Page title="오늘의 추천작가">
-      <Container>
+      <Container maxWidth="xl">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             오늘의 추천작가
           </Typography>
         </Stack>
 
-        <Card>
-          <RecommandWriterListToolbar filterName={filterName} onFilterName={handleFilterByName} />
+        <Stack direction="row" spacing={2}>
+          <WriterSearch selectedSearchWriter={selectedSearchWriter} addSelectedSearchWriter={addSelectedSearchWriter} />
+          <ButtonBoxStyle>
+            <ButtonStyle variant="contained" size="small" aria-label="move right" onClick={addRecommandedWriter}>
+              &gt;
+            </ButtonStyle>
+          </ButtonBoxStyle>
+          <RecommandWriterSubmit recommandedWriters={recommandedWriters} />
+        </Stack>
 
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <RecommandWriterListHead
-                  headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
-                  numSelected={selected.length}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {USERLIST.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, status, avatarUrl } = row;
-                    const isItemSelected = selected.indexOf(name) !== -1;
-
-                    return (
-                      <TableRow
-                        hover
-                        key={id}
-                        tabIndex={-1}
-                        role="checkbox"
-                        selected={isItemSelected}
-                        aria-checked={isItemSelected}
-                      >
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, name)} />
-                        </TableCell>
-                        <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell>
-                        <TableCell align="left">
-                          <Label variant="ghost" color={(status === 'banned' && 'error') || 'success'}>
-                            {sentenceCase(status)}
-                          </Label>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-
-                {isUserNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <SearchNotFound searchQuery={filterName} />
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-              </Table>
-            </TableContainer>
-          </Scrollbar>
-
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={USERLIST.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Card>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5} mt={5}>
+          <Typography variant="h4" gutterBottom>
+            예약 현황
+          </Typography>
+        </Stack>
       </Container>
     </Page>
   );
