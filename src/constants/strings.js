@@ -1,0 +1,4 @@
+export const recommandDroppableIds = {
+  SEARCHED_WRITER: 'SEARCHED_WRITER',
+  RECOMMANDED_WRITER: 'RECOMMANDED_WRITER',
+};
