@@ -16,13 +16,14 @@ const CardStyle = styled(Card)(() => ({
 
 SearchedWriter.propTypes = {
   searchedWriters: PropTypes.array.isRequired,
+  onSearchUser: PropTypes.func.isRequired,
 };
 
 const getListStyle = (isDraggingOver) => ({
   background: isDraggingOver ? '#fafafa' : '#fff',
 });
 
-export default function SearchedWriter({ searchedWriters }) {
+export default function SearchedWriter({ searchedWriters, onSearchUser }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [filterName, setFilterName] = useState('');
@@ -39,16 +40,24 @@ export default function SearchedWriter({ searchedWriters }) {
   const handleFilterByName = (event) => {
     setFilterName(event.target.value);
   };
+  const onSubmit = (e) => {
+    e.preventDefault();
+    onSearchUser(filterName);
+  };
 
   return (
     <CardStyle>
       <Typography variant="h6" gutterBottom>
         작가 검색
       </Typography>
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <RecommandWriterListToolbar filterName={filterName} handleFilterByName={handleFilterByName} />
-        <Button size="small">검색</Button>
-      </Stack>
+      <form onSubmit={onSubmit}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <RecommandWriterListToolbar filterName={filterName} onFilterName={handleFilterByName} />
+          <Button type="submit" size="small">
+            검색
+          </Button>
+        </Stack>
+      </form>
       {searchedWriters.length !== 0 ? (
         <Droppable droppableId={recommandDroppableIds.SEARCHED_WRITER}>
           {(provided, snapshot) => (

@@ -7,13 +7,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "eject": "react-scripts eject",
+    "deploy": "npm run build & firebase deploy --only hosting",
+    "deploy-function": "firebase deploy --only functions"
   },
   "babel": {
     "presets": [
@@ -42,6 +38,7 @@
     "apexcharts": "^3.35.0",
     "change-case": "^4.1.2",
     "date-fns": "^2.28.0",
+    "firebase": "^9.8.4",
     "formik": "^2.2.9",
     "lodash": "^4.17.21",
     "numeral": "^2.0.6",
@@ -55,6 +52,8 @@
     "react-scripts": "^5.0.0",
     "simplebar": "^5.3.6",
     "simplebar-react": "^2.3.6",
+    "util": "^0.12.4",
+    "uuid": "^8.3.2",
     "yup": "^0.32.11"
   },
   "devDependencies": {

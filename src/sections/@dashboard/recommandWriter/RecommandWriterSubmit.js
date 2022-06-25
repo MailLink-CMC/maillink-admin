@@ -23,13 +23,14 @@ const CardStyle = styled(Card)(() => ({
 RecommandWriterSubmit.propTypes = {
   recommandedWriters: PropTypes.array.isRequired,
   deleteWriter: PropTypes.func,
+  onClickSchedule: PropTypes.func.isRequired,
 };
 const getListStyle = (isDraggingOver) => ({
   background: isDraggingOver ? '#fafafa' : '#fff',
   height: '100%',
 });
 
-export default function RecommandWriterSubmit({ recommandedWriters, deleteWriter }) {
+export default function RecommandWriterSubmit({ recommandedWriters, deleteWriter, onClickSchedule }) {
   const [selectedTime, setSelectedTime] = useState(1);
 
   const selectTime = (event) => {
@@ -85,6 +86,13 @@ export default function RecommandWriterSubmit({ recommandedWriters, deleteWriter
                 label={'시간'}
                 value={selectedTime}
                 onChange={selectTime}
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: '10rem',
+                    },
+                  },
+                }}
               >
                 {new Array(24)
                   .fill(1)
@@ -96,7 +104,9 @@ export default function RecommandWriterSubmit({ recommandedWriters, deleteWriter
                   ))}
               </Select>
             </FormControl>
-            <Button variant="contained">예약</Button>
+            <Button variant="contained" onClick={() => onClickSchedule(selectedTime)}>
+              예약
+            </Button>
           </Stack>
         </Stack>
       </Stack>
