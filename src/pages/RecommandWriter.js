@@ -69,7 +69,7 @@ export default function RecommandWriter() {
     if (
       recommandDroppableIds.SEARCHED_WRITER === source.droppableId &&
       recommandDroppableIds.RECOMMANDED_WRITER === destination.droppableId &&
-      recommandedWriters.length < 5
+      recommandedWriters.length < 6
     ) {
       const newSearchedWriters = [...searchedWriters];
       const newRecommandedWriters = [...recommandedWriters];
