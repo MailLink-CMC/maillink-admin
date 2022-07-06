@@ -6,9 +6,8 @@ import ThemeProvider from './theme';
 // components
 import ScrollToTop from './components/ScrollToTop';
 import { BaseOptionChartStyle } from './components/chart/BaseOptionChart';
-import { getLocalstorage, removeLocalstorage } from './utils/localstorage';
+import { getLocalstorage } from './utils/localstorage';
 import axios from 'axios';
-import { authInit } from './utils/auth';
 import { useNavigate } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
@@ -58,22 +57,6 @@ export default function App() {
       }
     );
     return () => axios.interceptors.response.eject(interceptorId);
-  }, []);
-
-  useEffect(() => {
-    const authInitialize = async () => {
-      try {
-        const initResult = await authInit();
-        if (initResult) {
-          navigate('/dashboard/app', { replace: true });
-        } else {
-          removeLocalstorage('tokens');
-        }
-      } catch (e) {
-        removeLocalstorage('tokens');
-      }
-    };
-    authInitialize();
   }, []);
 
   return (

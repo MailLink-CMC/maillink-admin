@@ -37,7 +37,7 @@ export default function ScheduledSequencesCard({ scheduledSequences, deleteSched
             <Grid item xs={1}></Grid>
             <Grid item xs={1}></Grid>
             {scheduledSequences?.map((item, idx) => {
-              const names = item.items.map((item) => item.name).join(', ');
+              const names = item.items.map((item) => item.nickName).join(', ');
               return (
                 <Fragment key="idx">
                   <Grid item xs={3}>

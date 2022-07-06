@@ -38,9 +38,9 @@ export default function DrragebleItem({ item, index, deleteWriter }) {
             }
           >
             <ListItemAvatar>
-              <Avatar src={item.avatarUrl} />
+              <Avatar src={item.imgUrl} />
             </ListItemAvatar>
-            <ListItemText primary={item.name} />
+            <ListItemText primary={item.nickName} />
           </ListItem>
         </div>
       )}

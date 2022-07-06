@@ -1,12 +1,12 @@
 const axios = require('axios');
+const { Address } = require('./constants');
 
 exports.login = async (id, pw) => {
-  const res = await axios.post(`${Address}/api/user/auth/login/member`, {
+  const res = await axios.post(`${Address}/api/v1/admin/login`, {
     loginId: id,
     password: pw,
-    isPC: true,
   });
-  await setTokens(res.data.data);
+  await setTokens(res.data.data.token);
 };
 
 exports.setTokens = async (tokens) => {
@@ -15,5 +15,4 @@ exports.setTokens = async (tokens) => {
     refreshToken: tokens.refreshToken,
   };
   axios.defaults.headers.common['Authorization'] = `Bearer ${tokensObj.accessToken}`;
-  setLocalstorage('tokens', JSON.stringify(tokensObj));
 };

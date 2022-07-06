@@ -8,11 +8,12 @@ import * as FBDB from 'firebase/database';
 import { v4 as uuidv4 } from 'uuid';
 
 import { recommandDroppableIds, fbDBURL } from '../constants/strings';
-import USERLIST from '../_mock/user';
 // components
 import Page from '../components/Page';
 import { RecommandWriterSubmit, ScheduledSequencesCard, SearchedWriter } from '../sections/@dashboard/recommandWriter';
 import { database } from '../firebaseConfig';
+import { searchWriter } from 'src/api/searchWriter';
+import { submitToRecommandWriter } from 'src/api/recommandWriter';
 
 //----------------------------
 const ButtonBoxStyle = styled(Box)(() => ({
@@ -31,7 +32,7 @@ const ButtonStyle = styled(Button)(() => ({
 
 export default function RecommandWriter() {
   const [scheduledSequences, setScheduledSequences] = useState([]);
-  const [searchedWriters, setSearchedWriters] = useState(USERLIST);
+  const [searchedWriters, setSearchedWriters] = useState([]);
   const [selectedSearchWriter, setSelectedSearchWriter] = useState([]);
   const [recommandedWriters, setRecommandedWriters] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -49,15 +50,36 @@ export default function RecommandWriter() {
   }, []);
 
   const onSearchUser = async (query) => {
-    console.log(query);
+    try {
+      const result = await searchWriter(query);
+      setSearchedWriters(result);
+    } catch (e) {
+      setSnackbarOpen(true);
+      setSnackbarMessage('작가 검색에 실패했습니다.');
+    }
   };
-
   const addRecommandedWriter = () => {
     setRecommandedWriters((prev) => {
       const newSelectedSearchWriter = selectedSearchWriter.filter((writer) => !prev.some((w) => w.id === writer.id));
       return [...prev, ...newSelectedSearchWriter];
     });
     setSelectedSearchWriter([]);
+  };
+
+  const onSubmitRecommandWriter = async () => {
+    const requestList = recommandedWriters.map((item, idx) => ({
+      id: item.id,
+      sequence: idx,
+    }));
+    try {
+      await submitToRecommandWriter(requestList);
+      setSnackbarOpen(true);
+      setSnackbarMessage('추천작가 등록에 성공했습니다.');
+      setRecommandedWriters([]);
+    } catch (e) {
+      setSnackbarOpen(true);
+      setSnackbarMessage('추천작가 등록에 실패했습니다.');
+    }
   };
 
   const onDragEnd = (result) => {
@@ -98,6 +120,7 @@ export default function RecommandWriter() {
       setSnackbarOpen(true);
       return;
     }
+    console.log(recommandedWriters);
     const id = uuidv4();
     const newScheduled = scheduledSequences
       ? [
@@ -105,14 +128,22 @@ export default function RecommandWriter() {
           {
             id,
             at: Date.now() + afterHours * 60 * 60 * 1000,
-            items: recommandedWriters,
+            items: recommandedWriters.map((item, idx) => ({
+              id: item.id,
+              sequence: idx,
+              nickName: item.nickName,
+            })),
           },
         ]
       : [
           {
             id,
             at: Date.now() + afterHours * 60 * 60 * 1000,
-            items: recommandedWriters,
+            items: recommandedWriters.map((item, idx) => ({
+              id: item.id,
+              sequence: idx,
+              nickName: item.nickName,
+            })),
           },
         ];
     try {
@@ -180,6 +211,7 @@ export default function RecommandWriter() {
               recommandedWriters={recommandedWriters}
               deleteWriter={deleteRecommandedWriter}
               onClickSchedule={onScheduleRecommandedWriter}
+              onSubmitRecommandWriter={onSubmitRecommandWriter}
             />
           </DragDropContext>
         </Stack>

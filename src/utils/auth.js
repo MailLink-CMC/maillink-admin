@@ -1,21 +1,5 @@
-import { reissue } from '../api/auth';
-import { getLocalstorage, setLocalstorage } from './localstorage';
-
-export const authInit = async () => {
-  const tokensJson = getLocalstorage('tokens');
-
-  if (tokensJson !== null) {
-    //reissue
-    try {
-      await reissue(tokensJson);
-      return true;
-    } catch (err) {
-      return false;
-    }
-  } else {
-    return false;
-  }
-};
+import axios from 'axios';
+import { setLocalstorage } from './localstorage';
 
 export const setTokens = async (tokens) => {
   const tokensObj = {

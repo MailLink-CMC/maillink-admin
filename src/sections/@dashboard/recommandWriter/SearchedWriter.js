@@ -70,7 +70,7 @@ export default function SearchedWriter({ searchedWriters, onSearchUser }) {
           )}
         </Droppable>
       ) : (
-        <SearchNotFound searchQuery={filterName} />
+        <SearchNotFound />
       )}
       <TablePagination
         rowsPerPageOptions={[5]}

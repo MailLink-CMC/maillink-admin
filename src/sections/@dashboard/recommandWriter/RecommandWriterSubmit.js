@@ -24,13 +24,19 @@ RecommandWriterSubmit.propTypes = {
   recommandedWriters: PropTypes.array.isRequired,
   deleteWriter: PropTypes.func,
   onClickSchedule: PropTypes.func.isRequired,
+  onSubmitRecommandWriter: PropTypes.func.isRequired,
 };
 const getListStyle = (isDraggingOver) => ({
   background: isDraggingOver ? '#fafafa' : '#fff',
   height: '100%',
 });
 
-export default function RecommandWriterSubmit({ recommandedWriters, deleteWriter, onClickSchedule }) {
+export default function RecommandWriterSubmit({
+  recommandedWriters,
+  deleteWriter,
+  onClickSchedule,
+  onSubmitRecommandWriter,
+}) {
   const [selectedTime, setSelectedTime] = useState(1);
 
   const selectTime = (event) => {
@@ -76,7 +82,9 @@ export default function RecommandWriterSubmit({ recommandedWriters, deleteWriter
           )}
         </Droppable>
         <Stack direction="row" justifyContent={'space-between'} sx={{ width: '100%' }}>
-          <Button variant="contained">즉시 등록</Button>
+          <Button variant="contained" onClick={onSubmitRecommandWriter}>
+            즉시 등록
+          </Button>
           <Stack direction="row" spacing={2}>
             <FormControl variant="standard">
               <InputLabel id="recommandWriterTimeSelectLabel">시간</InputLabel>

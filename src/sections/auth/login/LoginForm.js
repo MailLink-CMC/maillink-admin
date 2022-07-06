@@ -1,12 +1,13 @@
-import * as Yup from 'yup';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
 // material
-import { Stack, Checkbox, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material';
+import { Stack, TextField, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // component
 import Iconify from '../../../components/Iconify';
+import { login } from '../../../api/auth';
+import { translateServerErrorMessage } from '../../../utils/translateServerErrorMessage';
 
 // ----------------------------------------------------------------------
 
@@ -15,27 +16,32 @@ export default function LoginForm() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const LoginSchema = Yup.object().shape({
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    password: Yup.string().required('Password is required'),
-  });
-
   const formik = useFormik({
     initialValues: {
-      email: '',
+      id: '',
       password: '',
-      remember: true,
     },
-    validationSchema: LoginSchema,
-    onSubmit: () => {
-      navigate('/dashboard/app', { replace: true });
+    initialErrors: {
+      id: '',
+      password: '',
+    },
+    onSubmit: async (form) => {
+      try {
+        await login(form.id.trim(), form.password.trim());
+        navigate('/dashboard/app', { replace: true });
+      } catch (e) {
+        setError(translateServerErrorMessage(e.response.data.reason));
+      }
     },
   });
 
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
+  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps, setFieldError } = formik;
 
   const handleShowPassword = () => {
     setShowPassword((show) => !show);
+  };
+  const setError = (error) => {
+    setFieldError('password', error);
   };
 
   return (
@@ -45,11 +51,11 @@ export default function LoginForm() {
           <TextField
             fullWidth
             autoComplete="username"
-            type="email"
-            label="Email address"
-            {...getFieldProps('email')}
-            error={Boolean(touched.email && errors.email)}
-            helperText={touched.email && errors.email}
+            type="id"
+            label="ID"
+            {...getFieldProps('id')}
+            error={Boolean(touched.id && errors.id)}
+            helperText={touched.id && errors.id}
           />
 
           <TextField
@@ -72,12 +78,7 @@ export default function LoginForm() {
           />
         </Stack>
 
-        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-          <FormControlLabel
-            control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />}
-            label="Remember me"
-          />
-        </Stack>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}></Stack>
 
         <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
           Login
