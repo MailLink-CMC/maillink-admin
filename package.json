@@ -52,6 +52,7 @@
     "react-query": "^3.39.1",
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.0",
+    "recoil": "^0.7.4",
     "simplebar": "^5.3.6",
     "simplebar-react": "^2.3.6",
     "util": "^0.12.4",

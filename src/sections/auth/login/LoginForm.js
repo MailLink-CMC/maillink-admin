@@ -8,6 +8,9 @@ import { LoadingButton } from '@mui/lab';
 import Iconify from '../../../components/Iconify';
 import { login } from '../../../api/auth';
 import { translateServerErrorMessage } from '../../../utils/translateServerErrorMessage';
+import { useSetRecoilState } from 'recoil';
+import { loginState } from 'src/stores/atom/auth';
+import axios, { AxiosError } from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -15,6 +18,7 @@ export default function LoginForm() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+  const setLoginState = useSetRecoilState(loginState);
 
   const formik = useFormik({
     initialValues: {
@@ -28,9 +32,14 @@ export default function LoginForm() {
     onSubmit: async (form) => {
       try {
         await login(form.id.trim(), form.password.trim());
+        setLoginState(true);
         navigate('/dashboard/app', { replace: true });
       } catch (e) {
-        setError(translateServerErrorMessage(e.response.data.reason));
+        if (e.response) {
+          setError(translateServerErrorMessage(e.response?.data?.reason));
+        } else {
+          setError('알 수 없는 오류가 발생했습니다.');
+        }
       }
     },
   });

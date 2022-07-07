@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 // material
 import { styled } from '@mui/material/styles';
 //
 import DashboardNavbar from './DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
+import { loginState } from 'src/stores/atom/auth';
+import { useEffect } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -34,6 +37,15 @@ const MainStyle = styled('div')(({ theme }) => ({
 
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
+  const loginStateValue = useRecoilValue(loginState);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (loginStateValue === false) {
+      navigate('/');
+    }
+  }, [loginStateValue]);
 
   return (
     <RootStyle>

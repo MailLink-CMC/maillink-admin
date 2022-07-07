@@ -10,3 +10,11 @@ export const login = async (id, pw) => {
   });
   await setTokens(res.data.data.token);
 };
+
+export const reissue = async (tokens) => {
+  const res = await axios.post(`${Address}/api/v1/admin/reissue`, {
+    ...tokens,
+  });
+  await setTokens(res.data.data);
+  return res.data.data;
+};

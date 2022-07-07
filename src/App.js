@@ -1,19 +1,24 @@
 // routes
 import { useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 import Router from './routes';
 // theme
 import ThemeProvider from './theme';
 // components
 import ScrollToTop from './components/ScrollToTop';
 import { BaseOptionChartStyle } from './components/chart/BaseOptionChart';
-import { getLocalstorage } from './utils/localstorage';
+import { getLocalstorage, removeLocalstorage } from './utils/localstorage';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { reissue } from './api/auth';
+import { authInit } from './utils/auth';
+import { loginState } from './stores/atom/auth';
 
 // ----------------------------------------------------------------------
 
 export default function App() {
   const navigate = useNavigate();
+  const setLoginState = useSetRecoilState(loginState);
 
   useEffect(() => {
     let refreshSubscriber = [];
@@ -42,10 +47,10 @@ export default function App() {
           });
           if (!isRefreshing) {
             localStorage.setItem('isRefreshing', true);
-            const tokensJson = getLocalstorage('@tokens');
+            const tokensJson = getLocalstorage('tokens');
             try {
               const res = await reissue(tokensJson);
-              onTokenRefreshed(res.data.accessToken);
+              onTokenRefreshed(res.accessToken);
             } catch (e) {
               refreshSubscriber = [];
             }
@@ -57,6 +62,23 @@ export default function App() {
       }
     );
     return () => axios.interceptors.response.eject(interceptorId);
+  }, []);
+
+  useEffect(() => {
+    const authInitialize = async () => {
+      try {
+        const initResult = await authInit();
+        if (initResult) {
+          setLoginState(true);
+          navigate('/dashboard/app', { replace: true });
+        } else {
+          removeLocalstorage('tokens');
+        }
+      } catch (e) {
+        removeLocalstorage('tokens');
+      }
+    };
+    authInitialize();
   }, []);
 
   return (

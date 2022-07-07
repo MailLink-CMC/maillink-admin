@@ -7,13 +7,16 @@ import { HelmetProvider } from 'react-helmet-async';
 
 //
 import App from './App';
+import { RecoilRoot } from 'recoil';
 // ----------------------------------------------------------------------
 
 ReactDOM.render(
   <HelmetProvider>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <RecoilRoot>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </RecoilRoot>
   </HelmetProvider>,
   document.getElementById('root')
 );

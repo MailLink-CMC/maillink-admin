@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useSetRecoilState } from 'recoil';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, MenuItem, Avatar, IconButton } from '@mui/material';
@@ -6,6 +7,8 @@ import { Box, Divider, Typography, MenuItem, Avatar, IconButton } from '@mui/mat
 import MenuPopover from '../../components/MenuPopover';
 // mocks_
 import account from '../../_mock/account';
+import { logout } from 'src/utils/auth';
+import { loginState } from 'src/stores/atom/auth';
 
 // ----------------------------------------------------------------------
 
@@ -14,11 +17,15 @@ export default function AccountPopover() {
 
   const [open, setOpen] = useState(null);
 
+  const setLoginState = useSetRecoilState(loginState);
+
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
 
   const handleClose = () => {
+    logout();
+    setLoginState(false);
     setOpen(null);
   };
 
