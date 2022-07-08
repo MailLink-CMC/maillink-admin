@@ -53,33 +53,4 @@ exports.scheduledRecommandWriters = functions
     return null;
   });
 
-exports.test = functions.https.onRequest(async (req, res) => {
-  const defaultDatabase = admin.database();
-  const ref = defaultDatabase.ref('recommandWriter');
-
-  const snapshot = await ref.once('value');
-  const schedule = snapshot.val();
-  if (!schedule) {
-    return null;
-  }
-
-  let logined = false;
-  const newSchedulePromises = schedule.map(async (item) => {
-    if (item.at < Date.now()) {
-      // 실행
-      if (logined === false) {
-        await login(process.env.ADMIN_ID, process.env.ADMIN_PASSWORD);
-        logined = true;
-      }
-      await submitToRecommandWriter(item.items);
-      return null;
-    }
-    return item;
-  });
-
-  const newSchedule = await Promise.all(newSchedulePromises);
-
-  ref.set(newSchedule.filter((item) => item !== null));
-  return null;
-  return;
-});
+exports.test = functions.https.onRequest(async (req, res) => {});

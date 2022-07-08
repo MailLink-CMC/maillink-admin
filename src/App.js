@@ -49,6 +49,7 @@ export default function App() {
             localStorage.setItem('isRefreshing', true);
             const tokensJson = getLocalstorage('tokens');
             try {
+              axios.defaults.headers.common['Authorization'] = null;
               const res = await reissue(tokensJson);
               onTokenRefreshed(res.accessToken);
             } catch (e) {
