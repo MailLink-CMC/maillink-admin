@@ -38,7 +38,12 @@ export default function DrragebleItem({ item, index, deleteWriter }) {
             }
           >
             <ListItemAvatar>
-              <Avatar src={item.imgUrl} />
+              <Avatar
+                src={item.imgUrl}
+                onClick={() => {
+                  window.open(item.imgUrl, '_blank');
+                }}
+              />
             </ListItemAvatar>
             <ListItemText primary={item.nickName} />
           </ListItem>
