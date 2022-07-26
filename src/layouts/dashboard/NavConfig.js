@@ -18,7 +18,7 @@ const navConfig = [
   },
   {
     title: '작가 신청',
-    path: '/dashboard/admission',
+    path: '/dashboard/register',
     icon: getIcon('eva:shopping-bag-fill'),
   },
   {

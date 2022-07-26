@@ -7,8 +7,10 @@ import Report from './pages/Report';
 import RecommandWriter from './pages/RecommandWriter';
 import Login from './pages/Login';
 import NotFound from './pages/Page404';
-import Addmission from './pages/Addmission';
 import DashboardApp from './pages/DashboardApp';
+import RegisterWriter from './sections/register/RegisterWriter';
+import RegisterWriterDetail from './sections/register/RegisterWriterDetail';
+import Register from './pages/Register';
 
 // ----------------------------------------------------------------------
 
@@ -20,7 +22,14 @@ export default function Router() {
       children: [
         { path: 'app', element: <DashboardApp /> },
         { path: 'recommand', element: <RecommandWriter /> },
-        { path: 'admission', element: <Addmission /> },
+        {
+          path: '/dashboard/register',
+          element: <Register />,
+          children: [
+            { path: '/dashboard/register/detail', element: <RegisterWriterDetail /> },
+            { path: '/dashboard/register', element: <RegisterWriter /> },
+          ],
+        },
         { path: 'report', element: <Report /> },
       ],
     },
