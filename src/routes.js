@@ -11,6 +11,8 @@ import DashboardApp from './pages/DashboardApp';
 import RegisterWriter from './sections/register/RegisterWriter';
 import RegisterWriterDetail from './sections/register/RegisterWriterDetail';
 import Register from './pages/Register';
+import ReportList from './sections/report/ReportList';
+import ReportDetail from './sections/report/ReportDetail';
 
 // ----------------------------------------------------------------------
 
@@ -23,14 +25,21 @@ export default function Router() {
         { path: 'app', element: <DashboardApp /> },
         { path: 'recommand', element: <RecommandWriter /> },
         {
-          path: '/dashboard/register',
+          path: 'register',
           element: <Register />,
           children: [
-            { path: '/dashboard/register/detail', element: <RegisterWriterDetail /> },
             { path: '/dashboard/register', element: <RegisterWriter /> },
+            { path: 'detail', element: <RegisterWriterDetail /> },
           ],
         },
-        { path: 'report', element: <Report /> },
+        {
+          path: 'report',
+          element: <Report />,
+          children: [
+            { path: '/dashboard/report', element: <ReportList /> },
+            { path: 'detail', element: <ReportDetail /> },
+          ],
+        },
       ],
     },
     {

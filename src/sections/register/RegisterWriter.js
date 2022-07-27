@@ -11,9 +11,66 @@ import Iconify from 'src/components/Iconify';
 import { useNavigate } from 'react-router-dom';
 // ----------------------------------------------------------------------
 const rows = [
-  { id: 1, status: 'Hello', name: 'World', email: 'gpfqpsxj75@naver.com' },
-  { id: 2, status: 'DataGridPro', name: 'is Awesome', email: 'gpfqpsxj75@naver.com' },
-  { id: 3, status: 'MUI', name: 'is Amazing', email: 'gpfqpsxj75@naver.com' },
+  {
+    id: 1,
+    status: 'Hello',
+    name: 'World',
+    email: 'gpfqpsxj75@naver.com',
+    introduction: `나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가`,
+    branch: ['Poetry', 'Novels'],
+    vive: ['Comfortable', 'Clear'],
+    websites: {
+      facebook: 'youngyoung1118',
+      twitter: '',
+      intagram: '',
+      etc: 'http://blog.com.youngyoung1118',
+    },
+    mails: [
+      { title: 'asdas', content: 'asdasdasd' },
+      { title: 'asdas', content: 'asdasdasd' },
+      { title: 'asdas', content: 'asdasdasd' },
+    ],
+  },
+  {
+    id: 2,
+    status: 'DataGridPro',
+    name: 'is Awesome',
+    email: 'gpfqpsxj75@naver.com',
+    introduction: `나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가`,
+    branch: ['Poetry', 'Novels'],
+    vive: ['Comfortable', 'Clear'],
+    websites: {
+      facebook: 'youngyoung1118',
+      twitter: '',
+      intagram: '',
+      etc: 'http://blog.com.youngyoung1118',
+    },
+    mails: [
+      { title: 'asdas', content: 'asdasdasd' },
+      { title: 'asdas', content: 'asdasdasd' },
+      { title: 'asdas', content: 'asdasdasd' },
+    ],
+  },
+  {
+    id: 3,
+    status: 'MUI',
+    name: 'is Amazing',
+    email: 'gpfqpsxj75@naver.com',
+    introduction: `나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가`,
+    branch: ['Poetry', 'Novels'],
+    vive: ['Comfortable', 'Clear'],
+    websites: {
+      facebook: 'youngyoung1118',
+      twitter: '',
+      intagram: '',
+      etc: 'http://blog.com.youngyoung1118',
+    },
+    mails: [
+      { title: 'asdas', content: 'asdasdasd' },
+      { title: 'asdas', content: 'asdasdasd' },
+      { title: 'asdas', content: 'asdasdasd' },
+    ],
+  },
 ];
 const columns = [
   { field: 'status', headerName: '상태', width: 100 },
@@ -24,7 +81,7 @@ export default function RegisterWriter() {
   const navigate = useNavigate();
 
   const onEnterClick = (row) => {
-    navigate('/dashboard/register/detail', { replace: true, state: { data: row } });
+    navigate('/dashboard/register/detail', { state: { data: row } });
   };
 
   const onApproveClick = (e) => {
