@@ -127,18 +127,27 @@ const colorCategory = {
 };
 
 const reportShortCategoryByName = {
-  commercial: '영리',
+  ADVERTISEMENT: '영리',
   ero: '음란성',
   violence: '권리침해',
   duplicate: '도배',
   etc: '기타',
 };
 const reportCategoryByName = {
-  commercial: '영리 목적/홍보성 글',
+  ADVERTISEMENT: '영리 목적/홍보성 글',
   ero: '음란성/선정성',
   violence: '타인의 권리침해',
   duplicate: '같은 내용 반복(도배)',
   etc: '기타 사유',
+};
+const reportStatus = {
+  WAIT: '대기중',
+  PROCESS: '처리중',
+  COMPLETE: '처리완료',
+};
+const reportPlatform = {
+  MAIL: '메일',
+  MESSAGE: '쪽지',
 };
 const Category = {
   branch,
@@ -148,6 +157,8 @@ const Category = {
   viveCategoryByName,
   reportShortCategoryByName,
   reportCategoryByName,
+  reportStatus,
+  reportPlatform,
 };
 
 export default Category;
