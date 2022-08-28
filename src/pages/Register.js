@@ -1,9 +1,10 @@
 import React from 'react';
 // material
-import { Box, Button, Card, Container, Stack, Typography } from '@mui/material';
+import { Button, Container, Stack, Typography } from '@mui/material';
 // components
 import Page from '../components/Page';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+
 // ----------------------------------------------------------------------
 export default function Register() {
   const { pathname } = useLocation();
@@ -11,6 +12,7 @@ export default function Register() {
   const onClickGoback = () => {
     navigate(-1);
   };
+
   return (
     <Page title="작가신청" sx={{ height: '100%' }}>
       <Container maxWidth="xl" sx={{ height: '100%' }}>

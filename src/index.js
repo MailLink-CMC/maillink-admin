@@ -8,14 +8,19 @@ import { HelmetProvider } from 'react-helmet-async';
 //
 import App from './App';
 import { RecoilRoot } from 'recoil';
+
+import { QueryClient, QueryClientProvider } from 'react-query';
 // ----------------------------------------------------------------------
 
+const queryClient = new QueryClient();
 ReactDOM.render(
   <HelmetProvider>
     <RecoilRoot>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </QueryClientProvider>
     </RecoilRoot>
   </HelmetProvider>,
   document.getElementById('root')

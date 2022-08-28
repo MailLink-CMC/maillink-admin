@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 // material
 import { Card } from '@mui/material';
 // components
@@ -9,96 +9,84 @@ import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 
 import Iconify from 'src/components/Iconify';
 import { useNavigate } from 'react-router-dom';
+import { reactQueryKeys } from 'src/utils/constants';
+import { getRegisterList, postRegisterResult } from 'src/api/register';
+import { useQuery } from 'react-query';
+import Category from 'src/utils/categorys';
 // ----------------------------------------------------------------------
-const rows = [
-  {
-    id: 1,
-    status: 'Hello',
-    name: 'World',
-    email: 'gpfqpsxj75@naver.com',
-    introduction: `나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가`,
-    branch: ['Poetry', 'Novels'],
-    vive: ['Comfortable', 'Clear'],
-    websites: {
-      facebook: 'youngyoung1118',
-      twitter: '',
-      intagram: '',
-      etc: 'http://blog.com.youngyoung1118',
-    },
-    mails: [
-      { title: 'asdas', content: 'asdasdasd' },
-      { title: 'asdas', content: 'asdasdasd' },
-      { title: 'asdas', content: 'asdasdasd' },
-    ],
-  },
-  {
-    id: 2,
-    status: 'DataGridPro',
-    name: 'is Awesome',
-    email: 'gpfqpsxj75@naver.com',
-    introduction: `나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가`,
-    branch: ['Poetry', 'Novels'],
-    vive: ['Comfortable', 'Clear'],
-    websites: {
-      facebook: 'youngyoung1118',
-      twitter: '',
-      intagram: '',
-      etc: 'http://blog.com.youngyoung1118',
-    },
-    mails: [
-      { title: 'asdas', content: 'asdasdasd' },
-      { title: 'asdas', content: 'asdasdasd' },
-      { title: 'asdas', content: 'asdasdasd' },
-    ],
-  },
-  {
-    id: 3,
-    status: 'MUI',
-    name: 'is Amazing',
-    email: 'gpfqpsxj75@naver.com',
-    introduction: `나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가 나는 작가`,
-    branch: ['Poetry', 'Novels'],
-    vive: ['Comfortable', 'Clear'],
-    websites: {
-      facebook: 'youngyoung1118',
-      twitter: '',
-      intagram: '',
-      etc: 'http://blog.com.youngyoung1118',
-    },
-    mails: [
-      { title: 'asdas', content: 'asdasdasd' },
-      { title: 'asdas', content: 'asdasdasd' },
-      { title: 'asdas', content: 'asdasdasd' },
-    ],
-  },
-];
+
 const columns = [
-  { field: 'status', headerName: '상태', width: 100 },
-  { field: 'name', headerName: '이름', width: 150 },
-  { field: 'email', headerName: '이메일', width: 300 },
+  {
+    field: 'status',
+    headerName: '상태',
+    width: 200,
+    valueGetter: (item) => {
+      return Category.registerStatus[item.value];
+    },
+  },
+  { field: 'nickName', headerName: '이름', width: 200 },
+  { field: 'receiveMail', headerName: '이메일', width: 300 },
 ];
 export default function RegisterWriter() {
+  const { data, isLoading } = useQuery(reactQueryKeys.GET_REGISTER_LIST, getRegisterList);
   const navigate = useNavigate();
+
+  const registerList = useMemo(() => {
+    return data?.map((item) => ({
+      id: item.writerRegistrationEntity.id,
+      uid: item.writerRegistrationEntity.uid,
+      introduce: item.writerRegistrationEntity.introduce,
+      nickName: item.nickName,
+      status: item.writerRegistrationEntity.status,
+      receiveMail: item.writerRegistrationEntity.receiveMail,
+      vive: [
+        item.writerRegistrationEntity?.mood1,
+        item.writerRegistrationEntity?.mood2,
+        item.writerRegistrationEntity?.mood3,
+      ],
+      branch: [
+        item.writerRegistrationEntity?.genre1,
+        item.writerRegistrationEntity?.genre2,
+        item.writerRegistrationEntity?.genre3,
+      ],
+      websites: {
+        facebook: item.writerRegistrationEntity.faceBook,
+        twitter: item.writerRegistrationEntity.twitter,
+        intagram: item.writerRegistrationEntity.intagram,
+        etc: item.writerRegistrationEntity.etcLink,
+      },
+    }));
+  }, [data]);
 
   const onEnterClick = (row) => {
     navigate('/dashboard/register/detail', { state: { data: row } });
   };
 
-  const onApproveClick = (e) => {
-    if (window.confirm('승인하시겠습니까?')) {
-      console.log(e);
+  const onApproveClick = async (e) => {
+    if (window.confirm('허가하시겠습니까?')) {
+      try {
+        await postRegisterResult(e?.id, true);
+        window.alert('허가되었습니다.');
+      } catch (e) {
+        window.alert('허가가 실패했습니다. 계속될 시 관리자에게 문의하세요');
+      }
     }
   };
-  const onRejectClick = (e) => {
+  const onRejectClick = async (e) => {
     if (window.confirm('정말로 거절하시겠습니까?')) {
-      console.log(e);
+      try {
+        await postRegisterResult(e?.id, false);
+        window.alert('거절되었습니다.');
+      } catch (e) {
+        window.alert('거절이 실패했습니다. 계속될 시 관리자에게 문의하세요');
+      }
     }
   };
 
   return (
     <Card sx={{ width: '100%', height: '100%', marginTop: 4 }}>
       <DataGrid
-        rows={rows}
+        rows={registerList || []}
         columns={[
           ...columns,
           {
@@ -115,7 +103,7 @@ export default function RegisterWriter() {
                 <GridActionsCellItem
                   icon={<DoneIcon />}
                   onClick={() => onApproveClick(params.row)}
-                  label="승인"
+                  label="허가"
                   showInMenu
                 />,
                 <GridActionsCellItem

@@ -12,13 +12,14 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { reissue } from './api/auth';
 import { authInit } from './utils/auth';
-import { loginState } from './stores/atom/auth';
+
+import atoms from './stores/atoms';
 
 // ----------------------------------------------------------------------
 
 export default function App() {
   const navigate = useNavigate();
-  const setLoginState = useSetRecoilState(loginState);
+  const setLoginState = useSetRecoilState(atoms.Auth.loginState);
 
   useEffect(() => {
     let refreshSubscriber = [];
@@ -35,8 +36,8 @@ export default function App() {
         const isRefreshing = !getLocalstorage('isRefreshing') ? false : true;
         if (
           !originalRequest._retry &&
-          ((err.response?.data.status === 400 && err.response?.data.message.includes('만료된 JWT')) ||
-            (err.response?.data.status === 401 && err.response?.data.message.includes('잘못된 JWT')))
+          ((err.response?.data.status === 400 && err.response?.data?.message?.includes('JWT')) ||
+            (err.response?.data.status === 401 && err.response?.data?.message?.includes('JWT')))
         ) {
           originalRequest._retry = true;
           const retryOriginalRequest = new Promise((resolve) => {

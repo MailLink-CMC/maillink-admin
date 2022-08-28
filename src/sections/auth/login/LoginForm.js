@@ -9,8 +9,7 @@ import Iconify from '../../../components/Iconify';
 import { login } from '../../../api/auth';
 import { translateServerErrorMessage } from '../../../utils/translateServerErrorMessage';
 import { useSetRecoilState } from 'recoil';
-import { loginState } from 'src/stores/atom/auth';
-import axios, { AxiosError } from 'axios';
+import atoms from 'src/stores/atoms';
 
 // ----------------------------------------------------------------------
 
@@ -18,7 +17,7 @@ export default function LoginForm() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
-  const setLoginState = useSetRecoilState(loginState);
+  const setLoginState = useSetRecoilState(atoms.Auth.loginState);
 
   const formik = useFormik({
     initialValues: {

@@ -10,6 +10,9 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import LinkIcon from '@mui/icons-material/Link';
 import { useEffect } from 'react';
+import { useQuery } from 'react-query';
+import { getRegisterPost, postRegisterResult } from 'src/api/register';
+import { reactQueryKeys } from 'src/utils/constants';
 // ----------------------------------------------------------------------
 
 const sectionStyle = {
@@ -23,6 +26,13 @@ export default function RegisterWriterDetail() {
   const { state } = useLocation();
   const [data, setData] = useState();
   const [pageNum, setPageNum] = useState(0);
+  const { data: registerPosts, isLoading } = useQuery(
+    [reactQueryKeys.GET_REGISTER_POST, state?.data?.id],
+    () => getRegisterPost(state?.data?.id),
+    {
+      enabled: state?.data?.id !== undefined,
+    }
+  );
 
   const navigate = useNavigate();
 
@@ -37,53 +47,81 @@ export default function RegisterWriterDetail() {
   const onClickPageChange = (to) => {
     setPageNum(to);
   };
+
+  const onClickApprove = async () => {
+    if (window.confirm('허가하시겠습니까?')) {
+      try {
+        await postRegisterResult(data?.id, true);
+        window.alert('허가되었습니다.');
+        navigate(-1);
+      } catch (e) {
+        window.alert('허가가 실패했습니다. 계속될 시 관리자에게 문의하세요');
+      }
+    }
+  };
+  const onClickReject = async () => {
+    if (window.confirm('정말로 거절하시겠습니까?')) {
+      try {
+        await postRegisterResult(data?.id, false);
+        window.alert('거절되었습니다.');
+        navigate(-1);
+      } catch (e) {
+        window.alert('거절이 실패했습니다. 계속될 시 관리자에게 문의하세요');
+      }
+    }
+  };
+
   return (
     <Paper elevation={3} sx={{ width: '100%', height: '100%', marginTop: 2 }}>
       {pageNum === 0 ? (
         <Stack spacing={2} divider={<DividerComponent />}>
           <Stack spacing={2} sx={sectionStyle}>
             <Typography variant="h5">1. 작가이름</Typography>
-            <Typography variant="span">{data?.name}</Typography>
+            <Typography variant="span">{data?.nickName}</Typography>
           </Stack>
 
           <Stack spacing={2} sx={sectionStyle}>
             <Typography variant="h5">2. 작가소개</Typography>
-            <Typography variant="span">{data?.introduction}</Typography>
+            <Typography variant="span">{data?.introduce}</Typography>
           </Stack>
 
           <Stack spacing={2} sx={sectionStyle}>
             <Typography variant="h5">3. 글관심사</Typography>
             <Stack spacing={2} direction="row" alignItems="center">
               <Typography variant="span">갈래</Typography>
-              {data?.branch?.map((item) => {
-                const category = Category.branchCategoryByName[item];
-                return (
-                  <Chip
-                    key={category}
-                    label={category}
-                    sx={{
-                      backgroundColor: Category.colorCategory[category].back,
-                      color: Category.colorCategory[category].font,
-                    }}
-                  />
-                );
-              })}
+              {data?.branch
+                ?.filter((item) => item !== null)
+                .map((item) => {
+                  const category = Category.branchCategoryByName[item];
+                  return (
+                    <Chip
+                      key={category}
+                      label={category}
+                      sx={{
+                        backgroundColor: Category.colorCategory[category]?.back,
+                        color: Category.colorCategory[category]?.font,
+                      }}
+                    />
+                  );
+                })}
             </Stack>
             <Stack spacing={2} direction="row" alignItems="center">
               <Typography variant="span">분위기</Typography>
-              {data?.vive?.map((item) => {
-                const category = Category.viveCategoryByName[item];
-                return (
-                  <Chip
-                    key={category}
-                    label={category}
-                    sx={{
-                      backgroundColor: Category.colorCategory[category].back,
-                      color: Category.colorCategory[category].font,
-                    }}
-                  />
-                );
-              })}
+              {data?.vive
+                ?.filter((item) => item !== null)
+                .map((item) => {
+                  const category = Category.viveCategoryByName[item];
+                  return (
+                    <Chip
+                      key={category}
+                      label={category}
+                      sx={{
+                        backgroundColor: Category.colorCategory[category]?.back,
+                        color: Category.colorCategory[category]?.font,
+                      }}
+                    />
+                  );
+                })}
             </Stack>
           </Stack>
 
@@ -122,7 +160,7 @@ export default function RegisterWriterDetail() {
 
           <Stack spacing={2} sx={sectionStyle}>
             <Typography variant="h5">5. 이메일</Typography>
-            <Typography variant="span">{data?.email}</Typography>
+            <Typography variant="span">{data?.receiveMail}</Typography>
           </Stack>
 
           <Stack spacing={2} direction="row" sx={sectionStyle} justifyContent="flex-end">
@@ -134,11 +172,11 @@ export default function RegisterWriterDetail() {
       ) : (
         <Stack spacing={2} divider={<DividerComponent />}>
           <Stack spacing={2} sx={sectionStyle} divider={<DividerComponent />}>
-            {data?.mails?.map((item, idx) => {
+            {registerPosts?.map((item, idx) => {
               return (
                 <Stack key={item.title + idx} spacing={2}>
-                  <Typography variant="h6">{item.title}</Typography>
-                  <Typography variant="span">{item.content}</Typography>
+                  <Typography variant="h6">{item.title ? item.title : '제목없음'}</Typography>
+                  <Typography variant="span">{item.content ? item.content : '내용없음'}</Typography>
                 </Stack>
               );
             })}
@@ -148,8 +186,10 @@ export default function RegisterWriterDetail() {
               이전
             </Button>
             <Stack spacing={2} direction="row">
-              <Button variant="outlined">허가하기</Button>
-              <Button variant="outlined" color="error">
+              <Button variant="outlined" onClick={onClickApprove}>
+                허가하기
+              </Button>
+              <Button variant="outlined" color="error" onClick={onClickReject}>
                 거절하기
               </Button>
             </Stack>

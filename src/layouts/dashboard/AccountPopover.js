@@ -8,7 +8,7 @@ import MenuPopover from '../../components/MenuPopover';
 // mocks_
 import account from '../../_mock/account';
 import { logout } from 'src/utils/auth';
-import { loginState } from 'src/stores/atom/auth';
+import atoms from 'src/stores/atoms';
 
 // ----------------------------------------------------------------------
 
@@ -17,7 +17,7 @@ export default function AccountPopover() {
 
   const [open, setOpen] = useState(null);
 
-  const setLoginState = useSetRecoilState(loginState);
+  const setLoginState = useSetRecoilState(atoms.Auth.loginState);
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);

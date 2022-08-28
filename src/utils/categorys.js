@@ -149,6 +149,14 @@ const reportPlatform = {
   MAIL: '메일',
   MESSAGE: '쪽지',
 };
+
+const registerStatus = {
+  NOT_EXIST: '미신청',
+  TEMP: '임시저장',
+  REGISTRATION: '심사대기중',
+  REJECT: '거절',
+  ACCEPT: '허가',
+};
 const Category = {
   branch,
   vive,
@@ -159,6 +167,7 @@ const Category = {
   reportCategoryByName,
   reportStatus,
   reportPlatform,
+  registerStatus,
 };
 
 export default Category;

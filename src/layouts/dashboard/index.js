@@ -6,8 +6,9 @@ import { styled } from '@mui/material/styles';
 //
 import DashboardNavbar from './DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
-import { loginState } from 'src/stores/atom/auth';
+import { loginState } from 'src/stores/atoms/auth';
 import { useEffect } from 'react';
+import atoms from 'src/stores/atoms';
 
 // ----------------------------------------------------------------------
 
@@ -37,7 +38,7 @@ const MainStyle = styled('div')(({ theme }) => ({
 
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
-  const loginStateValue = useRecoilValue(loginState);
+  const loginStateValue = useRecoilValue(atoms.Auth.loginState);
 
   const navigate = useNavigate();
 
